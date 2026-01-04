@@ -1,0 +1,2 @@
+# rustfs-flake
+RustFS NixOS
