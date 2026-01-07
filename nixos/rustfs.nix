@@ -68,13 +68,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = [
-      {
-        assertion = cfg.package != null;
-        message = "services.rustfs.package must be set";
-      }
-    ];
-
     environment.etc."default/rustfs".source = envFile;
 
     systemd.tmpfiles.rules =
