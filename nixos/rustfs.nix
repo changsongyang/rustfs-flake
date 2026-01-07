@@ -29,41 +29,77 @@ in
     accessKey = lib.mkOption {
       type = lib.types.str;
       default = "rustfsadmin";
+      description = ''
+        Access key used by RustFS for client authentication.
+        This value is exported as the RUSTFS_ACCESS_KEY environment variable.
+        Use a strong, secret value in production deployments.
+      '';
     };
 
     secretKey = lib.mkOption {
       type = lib.types.str;
       default = "rustfsadmin";
+      description = ''
+        Secret key used by RustFS for signing and authorization.
+        This value is exported as the RUSTFS_SECRET_KEY environment variable.
+        Treat this as a credential and avoid committing it to version control.
+      '';
     };
 
     volumes = lib.mkOption {
       type = lib.types.str;
       default = "/data/rustfs0";
+      description = ''
+        Storage volume configuration for RustFS.
+        Typically a path or a comma-separated list of paths where RustFS stores data,
+        exported as the RUSTFS_VOLUMES environment variable.
+      '';
     };
 
     address = lib.mkOption {
       type = lib.types.str;
       default = ":9000";
+      description = ''
+        Network address RustFS listens on, for example ":9000" or "127.0.0.1:9000".
+        This is exported as the RUSTFS_ADDRESS environment variable.
+        Adjust this to control which interfaces and port are exposed.
+      '';
     };
 
     consoleEnable = lib.mkOption {
       type = lib.types.bool;
       default = true;
+      description = ''
+        Whether to enable the RustFS management console.
+        When enabled, the console can be accessed using the configured address.
+      '';
     };
 
     logLevel = lib.mkOption {
       type = lib.types.str;
       default = "error";
+      description = ''
+        Log level for the RustFS service, passed via the RUST_LOG environment variable.
+        Common values include "error", "warn", "info", "debug", and "trace".
+      '';
     };
 
     logDirectory = lib.mkOption {
       type = lib.types.path;
       default = "/var/log/rustfs";
+      description = ''
+        Directory where RustFS service logs are written.
+        Systemd StandardOutput and StandardError are appended to files in this directory.
+      '';
     };
 
     tlsDirectory = lib.mkOption {
       type = lib.types.path;
       default = "/opt/tls";
+      description = ''
+        Directory containing TLS certificates and keys used by RustFS, if TLS is enabled.
+        Configure this to point to the location of your certificate and key files.
+      '';
     };
   };
 
