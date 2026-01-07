@@ -1,21 +1,27 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   cfg = config.services.rustfs;
 
-  envFile = pkgs.writeText "rustfs.env" ''
-    RUSTFS_ACCESS_KEY=${cfg.accessKey}
-    RUSTFS_SECRET_KEY=${cfg.secretKey}
-    RUSTFS_VOLUMES="${cfg.volumes}"
-    RUSTFS_ADDRESS="${cfg.address}"
-    RUSTFS_CONSOLE_ENABLE=${lib.boolToString cfg.consoleEnable}
-    RUST_LOG=${cfg.logLevel}
-    RUSTFS_OBS_LOG_DIRECTORY="${cfg.logDirectory}"
-  '';
-  startScript = pkgs.writeShellScriptBin "rustfs" ''
-    . /etc/default/rustfs
-    exec ${cfg.package}/bin/rustfs $RUSTFS_VOLUMES
-  '';
+  envFile = pkgs.writeText "rustfs.env" (
+    ''
+      RUSTFS_ACCESS_KEY=${cfg.accessKey}
+      RUSTFS_SECRET_KEY=${cfg.secretKey}
+      RUSTFS_VOLUMES="${cfg.volumes}"
+      RUSTFS_ADDRESS="${cfg.address}"
+      RUSTFS_CONSOLE_ENABLE=${lib.boolToString cfg.consoleEnable}
+      RUST_LOG=${cfg.logLevel}
+      RUSTFS_OBS_LOG_DIRECTORY="${cfg.logDirectory}"
+    ''
+    + lib.concatStringsSep "\n" (
+      lib.mapAttrsToList (name: value: "${name}=${value}") cfg.extraEnvironmentVariables
+    )
+  );
 in
 {
   options.services.rustfs = {
@@ -24,6 +30,16 @@ in
     package = lib.mkOption {
       type = lib.types.package;
       description = "RustFS package providing the rustfs binary";
+    };
+
+    extraEnvironmentVariables = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      description = ''
+        Additional environment variables to set for the RustFS service.
+        These will be appended to the environment file at /etc/default/rustfs.
+        Used for advanced configuration not covered by other options. (e.g. `RUST_BACKTRACE`)
+      '';
     };
 
     accessKey = lib.mkOption {
@@ -106,11 +122,10 @@ in
   config = lib.mkIf cfg.enable {
     environment.etc."default/rustfs".source = envFile;
 
-    systemd.tmpfiles.rules =
-      [
-        "d ${cfg.logDirectory} 0750 root root -"
-        "d ${cfg.tlsDirectory} 0750 root root -"
-      ];
+    systemd.tmpfiles.rules = [
+      "d ${cfg.logDirectory} 0750 root root -"
+      "d ${cfg.tlsDirectory} 0750 root root -"
+    ];
 
     systemd.services.rustfs = {
       description = "RustFS Object Storage Server";

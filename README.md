@@ -88,3 +88,9 @@ The log directory.
 ### services.rustfs.tlsDirectory
 
 The TLS directory.
+
+### services.rustfs.extraEnvironmentVariables
+
+Additional environment variables to set for the RustFS service.
+These will be appended to the environment file at /etc/default/rustfs.
+Used for advanced configuration not covered by other options. (e.g. `RUST_BACKTRACE`)
