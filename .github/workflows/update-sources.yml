@@ -73,9 +73,10 @@ jobs:
             URL="https://github.com/$REPO/releases/download/$VERSION/$FILE_NAME"
             
             echo "Fetching hash for $URL..."
-            # FIX: Added --hex to match standard SHA256 hex format
-            HASH=$(nix-prefetch-url --type sha256 --hex "$URL")
-            
+            # Get base32 hash from nix-prefetch-url and convert to hex (base16)
+            BASE32_HASH=$(nix-prefetch-url --type sha256 "$URL")
+            HASH=$(nix-hash --type sha256 --to-base16 "$BASE32_HASH")
+
             jq --arg sys "$system" --arg hash "$HASH" '.files[$sys].sha256 = $hash' sources.json.new > sources.json.tmp
             mv sources.json.tmp sources.json.new
           done
