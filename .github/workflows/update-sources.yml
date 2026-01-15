@@ -16,8 +16,14 @@ name: Update Sources
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Daily at midnight
+    - cron: '0 */2 * * *' # every 2 hours
   workflow_dispatch: # Manual trigger
+  repository_dispatch:
+    types: [ release ]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   update-sources:
@@ -83,8 +89,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update sources.json to ${{ steps.update_script.outputs.version }}"
-          committer: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
-          author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
           branch: "automation/update-sources-${{ steps.update_script.outputs.version }}"
           delete-branch: true
           title: "chore: update rustfs to ${{ steps.update_script.outputs.version }}"
