@@ -34,7 +34,7 @@ jobs:
       - name: Update sources.json
         id: update_script
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="rustfs/rustfs"
           LATEST_RELEASE=$(gh api repos/$REPO/releases/latest)
