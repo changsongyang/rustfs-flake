@@ -57,7 +57,7 @@ jobs:
             "version": "$VERSION",
             "downloadBase": "https://github.com/$REPO/releases/download",
             "files": {
-              "x86_64-linux":  { "name": "rustfs-linux-x86_64-musl-latest.zip" },
+              "x86_64-linux": { "name": "rustfs-linux-x86_64-musl-latest.zip" },
               "aarch64-linux": { "name": "rustfs-linux-aarch64-musl-latest.zip" },
               "x86_64-darwin": { "name": "rustfs-macos-x86_64-latest.zip" },
               "aarch64-darwin": { "name": "rustfs-macos-aarch64-latest.zip" }
