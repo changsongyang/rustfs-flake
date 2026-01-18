@@ -31,9 +31,11 @@
       forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
     in
     {
+      # Standard NixOS Module
       nixosModules.rustfs = import ./nixos/rustfs.nix;
       nixosModules.default = self.nixosModules.rustfs;
 
+      # Overlays for extending nixpkgs
       overlays.default = final: prev: {
         rustfs = self.packages.${prev.system}.default;
       };
